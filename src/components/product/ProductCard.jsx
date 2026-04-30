@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const wishlist = useSelector((state) => state.wishlist.items);
-  const isInWishlist = wishlist.some((item) => item.id === product.id);
+  const isInWishlist = wishlist.some((item) => (item._id || item.id) === (product._id || product.id));
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -24,10 +24,10 @@ const ProductCard = ({ product }) => {
 
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500">
-      <Link to={`/product/${product.id}`}>
+      <Link to={`/product/${product._id || product.id}`}>
         <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
           <img
-            src={product.image}
+            src={product.image || 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&q=80&w=500'}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
@@ -49,7 +49,7 @@ const ProductCard = ({ product }) => {
             <span className="text-xs text-gray-400 font-medium">({product.reviews || 0} reviews)</span>
           </div>
           <div className="flex items-center justify-between pt-4">
-            <span className="text-2xl font-black text-gray-900">${product.price}</span>
+            <span className="text-2xl font-black text-gray-900">₹{product.price}</span>
             <button
               onClick={handleAddToCart}
               className="p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"

@@ -17,7 +17,7 @@ const ProductListing = () => {
   const [viewMode, setViewMode] = useState('grid');
   const [filters, setFilters] = useState({
     category: searchParams.get('category') || '',
-    priceRange: 1000,
+    priceRange: 10000,
     minRating: 0,
     sort: 'newest'
   });
@@ -67,7 +67,8 @@ const ProductListing = () => {
               <h1 className="text-3xl font-black text-gray-900 capitalize tracking-tighter">
                 {filters.category || 'All Collections'}
               </h1>
-              <p className="text-sm text-gray-400 font-medium">{displayedProducts.length} items discovered</p>
+              <p className="text-sm text-gray-400 font-medium">{displayedProducts.length} items discovered (Total in state: {products.length})</p>
+
             </div>
 
             <div className="flex items-center gap-4 w-full sm:w-auto">

@@ -20,7 +20,7 @@ const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState('description');
   const [selectedImage, setSelectedImage] = useState(0);
 
-  const isInWishlist = wishlist.some((item) => item.id === product?.id);
+  const isInWishlist = wishlist.some((item) => (item._id || item.id) === (product?._id || product?.id));
 
   useEffect(() => {
     dispatch(fetchProductById(id));
@@ -112,9 +112,9 @@ const ProductDetail = () => {
             </div>
             
             <div className="flex items-baseline gap-4">
-              <span className="text-4xl font-extrabold text-primary-600">${product.price}</span>
+              <span className="text-4xl font-extrabold text-primary-600">₹{product.price}</span>
               {product.oldPrice && (
-                <span className="text-xl text-gray-400 line-through">${product.oldPrice}</span>
+                <span className="text-xl text-gray-400 line-through">₹{product.oldPrice}</span>
               )}
             </div>
           </div>

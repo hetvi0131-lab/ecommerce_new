@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Search, ShoppingCart, Heart, User, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
+import { Search, ShoppingCart, Heart, User, LogOut, Menu, X } from 'lucide-react';
 import { logout } from '../../redux/slices/authSlice';
 import Button from '../common/Button';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
   const dispatch = useDispatch();
@@ -22,16 +21,6 @@ const Navbar = () => {
     document.documentElement.classList.remove('dark');
     document.body.classList.remove('dark');
   }, []);
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.body.classList.remove('dark');
-    }
-  }, [isDark]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -72,10 +61,6 @@ const Navbar = () => {
 
           {/* Nav Links - Desktop */}
           <div className="hidden md:flex items-center gap-6">
-            <button onClick={() => setIsDark(!isDark)} className="p-3 hover:bg-gray-50 rounded-xl transition-colors">
-              {isDark ? <Sun className="w-5 h-5 text-accent-500" /> : <Moon className="w-5 h-5 text-gray-500" />}
-            </button>
-            
             <Link to="/wishlist" className="relative p-3 hover:bg-gray-50 rounded-xl transition-colors">
               <Heart className="w-5 h-5 text-gray-500" />
               {wishlistItems.length > 0 && (
@@ -132,9 +117,6 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4">
-            <button onClick={() => setIsDark(!isDark)} className="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
-              {isDark ? <Sun className="w-5 h-5 text-accent-400" /> : <Moon className="w-5 h-5 text-gray-600" />}
-            </button>
             <Link to="/cart" className="relative p-2">
               <ShoppingCart className="w-5 h-5" />
               {cartItems.length > 0 && (

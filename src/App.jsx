@@ -16,6 +16,7 @@ const OrderConfirmation = lazy(() => import('./pages/OrderConfirmation'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Wishlist = lazy(() => import('./pages/Wishlist'));
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
+const Orders = lazy(() => import('./pages/Orders'));
 
 const App = () => {
   return (
@@ -52,10 +53,7 @@ const App = () => {
           } />
           <Route path="orders" element={
             <ProtectedRoute>
-              <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-                 <h2 className="text-3xl font-bold">My Orders</h2>
-                 <p className="text-gray-500 mt-4">Order history feature coming soon...</p>
-              </div>
+              <Orders />
             </ProtectedRoute>
           } />
 

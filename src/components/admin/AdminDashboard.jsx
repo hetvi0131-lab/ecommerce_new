@@ -1,27 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Plus, Search, Edit2, Trash2, Package, Users, DollarSign, ShoppingBag, Eye, TrendingUp } from 'lucide-react';
-import { fetchProducts } from '../../redux/slices/productSlice';
+import { fetchProducts, deleteProduct } from '../../redux/slices/productSlice';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Skeleton from '../common/Skeleton';
 import AddProductModal from './AddProductModal';
+import api from '../../services/api/axiosConfig';
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { items: products, loading } = useSelector((state) => state.products);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  const handleEdit = (product) => {
+    setEditingProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleAddClick = () => {
+    setEditingProduct(null);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      dispatch(deleteProduct(id)).then((result) => {
+        if (result.meta.requestStatus === 'fulfilled') {
+          toast.success('Product deleted successfully');
+        }
+      });
+    }
+  };
+  const [dashboardStats, setDashboardStats] = useState({
+    totalRevenue: 0,
+    totalOrders: 0,
+    activeUsers: 0,
+    productsCount: 0
+  });
 
   useEffect(() => {
     dispatch(fetchProducts());
+    const fetchStats = async () => {
+      try {
+        const { data } = await api.get('/dashboard/stats');
+        setDashboardStats(data);
+      } catch (error) {
+        console.error('Failed to fetch stats', error);
+      }
+    };
+    fetchStats();
   }, [dispatch]);
 
   const stats = [
-    { label: 'Total Revenue', value: '$124,592', icon: DollarSign, color: 'text-green-600 bg-green-50 dark:bg-green-900/20' },
-    { label: 'Total Orders', value: '1,248', icon: ShoppingBag, color: 'text-primary-600 bg-primary-50 dark:bg-primary-900/20' },
-    { label: 'Active Users', value: '4,819', icon: Users, color: 'text-purple-600 bg-purple-50 dark:bg-purple-900/20' },
-    { label: 'Products', value: products.length, icon: Package, color: 'text-orange-600 bg-orange-50 dark:bg-orange-900/20' },
+    { label: 'Total Revenue', value: `₹${(dashboardStats?.totalRevenue || 0).toLocaleString()}`, icon: DollarSign, color: 'text-green-600 bg-green-50 dark:bg-green-900/20' },
+    { label: 'Total Orders', value: (dashboardStats?.totalOrders || 0).toLocaleString(), icon: ShoppingBag, color: 'text-primary-600 bg-primary-50 dark:bg-primary-900/20' },
+    { label: 'Active Users', value: (dashboardStats?.activeUsers || 0).toLocaleString(), icon: Users, color: 'text-purple-600 bg-purple-50 dark:bg-purple-900/20' },
+    { label: 'Products', value: (products?.length || dashboardStats?.productsCount || 0).toLocaleString(), icon: Package, color: 'text-orange-600 bg-orange-50 dark:bg-orange-900/20' },
   ];
 
   const filteredProducts = products.filter(p => 
@@ -36,7 +76,7 @@ const AdminDashboard = () => {
           <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter">Admin Dashboard</h1>
           <p className="text-gray-500 mt-1 font-medium">Manage your store products, orders and customers</p>
         </div>
-        <Button className="h-12 rounded-xl gap-2 shadow-lg shadow-primary-500/30" onClick={() => setIsModalOpen(true)}>
+        <Button className="h-12 rounded-xl gap-2 shadow-lg shadow-primary-500/30" onClick={handleAddClick}>
            <Plus className="w-5 h-5" /> Add New Product
         </Button>
       </div>
@@ -99,17 +139,21 @@ const AdminDashboard = () => {
                   </tr>
                 ))
               ) : filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
+                <tr key={product._id || product.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden flex-shrink-0 border border-gray-100 dark:border-gray-700">
-                        <img src={product.image} alt="" className="w-full h-full object-cover" />
+                        <img 
+                          src={product.image || 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&q=80&w=500'} 
+                          alt="" 
+                          className="w-full h-full object-cover" 
+                        />
                       </div>
                       <span className="font-bold text-gray-900 dark:text-white truncate max-w-[200px]">{product.name}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 capitalize">{product.category}</td>
-                  <td className="px-6 py-4 font-black text-primary-600">${product.price}</td>
+                  <td className="px-6 py-4 font-black text-primary-600">₹{product.price}</td>
                   <td className="px-6 py-4 text-sm">
                     <span className={`font-bold ${product.stock < 10 ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}>
                       {product.stock || 24}
@@ -120,15 +164,27 @@ const AdminDashboard = () => {
                       {product.stock === 0 ? 'Out of Stock' : 'Active'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right space-x-1">
-                    <button className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all">
-                      <Edit2 className="w-4 h-4" />
+                  <td className="px-6 py-4 text-right space-x-2">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleEdit(product); }}
+                      className="p-2.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all active:scale-95 cursor-pointer"
+                      title="Edit Product"
+                    >
+                      <Edit2 className="w-4.5 h-4.5" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all">
-                      <Trash2 className="w-4 h-4" />
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleDelete(product._id || product.id); }}
+                      className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all active:scale-95 cursor-pointer"
+                      title="Delete Product"
+                    >
+                      <Trash2 className="w-4.5 h-4.5" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-xl transition-all">
-                      <Eye className="w-4 h-4" />
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); navigate(`/product/${product._id || product.id}`); }}
+                      className="p-2.5 text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-xl transition-all active:scale-95 cursor-pointer"
+                      title="View Product"
+                    >
+                      <Eye className="w-4.5 h-4.5" />
                     </button>
                   </td>
                 </tr>
@@ -147,6 +203,7 @@ const AdminDashboard = () => {
       <AddProductModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
+        product={editingProduct}
       />
     </div>
   );

@@ -41,7 +41,7 @@ const Cart = () => {
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-6">
           {items.map((item) => (
-            <div key={item.id} className="group flex flex-col sm:flex-row gap-6 p-6 bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all">
+            <div key={item._id || item.id} className="group flex flex-col sm:flex-row gap-6 p-6 bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all">
               <div className="w-full sm:w-32 h-32 rounded-2xl overflow-hidden bg-gray-100 flex-shrink-0">
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
               </div>
@@ -50,12 +50,12 @@ const Cart = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white hover:text-primary-600 transition-colors">
-                      <Link to={`/product/${item.id}`}>{item.name}</Link>
+                      <Link to={`/product/${item._id || item.id}`}>{item.name}</Link>
                     </h3>
                     <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider">{item.category}</p>
                   </div>
                   <button 
-                    onClick={() => dispatch(removeFromCart(item.id))}
+                    onClick={() => dispatch(removeFromCart(item._id || item.id))}
                     className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-all"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -65,22 +65,22 @@ const Cart = () => {
                 <div className="flex justify-between items-end mt-4">
                   <div className="flex items-center bg-gray-50 dark:bg-gray-900 rounded-xl p-1 border border-gray-100 dark:border-gray-700">
                     <button 
-                      onClick={() => dispatch(updateQuantity({ id: item.id, quantity: Math.max(1, item.quantity - 1) }))}
+                      onClick={() => dispatch(updateQuantity({ id: item._id || item.id, quantity: Math.max(1, item.quantity - 1) }))}
                       className="p-2 hover:bg-white dark:hover:bg-gray-800 rounded-lg transition-all"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
                     <span className="w-10 text-center font-bold">{item.quantity}</span>
                     <button 
-                      onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }))}
+                      onClick={() => dispatch(updateQuantity({ id: item._id || item.id, quantity: item.quantity + 1 }))}
                       className="p-2 hover:bg-white dark:hover:bg-gray-800 rounded-lg transition-all"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-400 line-through">${(item.price * 1.2).toFixed(2)}</p>
-                    <p className="text-2xl font-black text-primary-600">${item.price}</p>
+                    <p className="text-sm text-gray-400 line-through">₹{(item.price * 1.2).toFixed(2)}</p>
+                    <p className="text-2xl font-black text-primary-600">₹{item.price}</p>
                   </div>
                 </div>
               </div>
@@ -102,20 +102,20 @@ const Cart = () => {
             <div className="space-y-4">
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Subtotal</span>
-                <span className="font-bold text-gray-900 dark:text-white">${totalAmount.toFixed(2)}</span>
+                <span className="font-bold text-gray-900 dark:text-white">₹{totalAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Estimated Shipping</span>
-                <span className="font-bold text-green-600">{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                <span className="font-bold text-green-600">{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(2)}`}</span>
               </div>
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Estimated Tax</span>
-                <span className="font-bold text-gray-900 dark:text-white">${tax.toFixed(2)}</span>
+                <span className="font-bold text-gray-900 dark:text-white">₹{tax.toFixed(2)}</span>
               </div>
               <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-bold">Total Amount</span>
-                  <span className="text-3xl font-black text-primary-600">${finalTotal.toFixed(2)}</span>
+                  <span className="text-3xl font-black text-primary-600">₹{finalTotal.toFixed(2)}</span>
                 </div>
               </div>
             </div>

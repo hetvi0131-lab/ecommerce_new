@@ -27,7 +27,7 @@ const FilterSidebar = ({ filters, setFilters, onClose }) => {
   };
 
   const clearFilters = () => {
-    setFilters({ category: '', priceRange: 1000, minRating: 0 });
+    setFilters({ category: '', priceRange: 10000, minRating: 0 });
   };
 
   return (
@@ -45,7 +45,7 @@ const FilterSidebar = ({ filters, setFilters, onClose }) => {
           <button onClick={clearFilters} className="text-[10px] text-primary-600 font-black uppercase tracking-widest hover:underline">Reset</button>
         </div>
         <div className="space-y-3">
-          {['Fashion', 'Electronics', 'Home & Decor', 'Beauty', 'Sports'].map((cat) => (
+          {categories.map((cat) => (
             <label key={cat} className="flex items-center gap-3 cursor-pointer group">
               <input
                 type="checkbox"
@@ -53,7 +53,7 @@ const FilterSidebar = ({ filters, setFilters, onClose }) => {
                 onChange={() => handleCategoryChange(cat.toLowerCase())}
                 className="w-5 h-5 rounded-lg border-gray-200 text-primary-600 focus:ring-primary-500 cursor-pointer transition-all"
               />
-              <span className={`text-sm transition-colors ${filters.category === cat.toLowerCase() ? 'font-black text-primary-600' : 'text-gray-500 font-medium group-hover:text-gray-900'}`}>
+              <span className={`text-sm transition-colors capitalize ${filters.category === cat.toLowerCase() ? 'font-black text-primary-600' : 'text-gray-500 font-medium group-hover:text-gray-900'}`}>
                 {cat}
               </span>
             </label>
@@ -66,15 +66,15 @@ const FilterSidebar = ({ filters, setFilters, onClose }) => {
         <input
           type="range"
           min="0"
-          max="1000"
-          step="50"
+          max="10000"
+          step="100"
           value={filters.priceRange}
           onChange={handlePriceChange}
           className="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-primary-600"
         />
         <div className="flex justify-between mt-4 text-xs font-bold text-gray-400 uppercase tracking-widest">
-          <span>$0</span>
-          <span className="text-primary-600">Up to ${filters.priceRange}</span>
+          <span>₹0</span>
+          <span className="text-primary-600">Up to ₹{filters.priceRange}</span>
         </div>
       </div>
 

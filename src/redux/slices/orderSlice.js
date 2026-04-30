@@ -28,8 +28,9 @@ export const fetchAllOrdersAdmin = createAsyncThunk('orders/fetchAllAdmin', asyn
   }
 });
 
+const savedOrders = JSON.parse(localStorage.getItem('userOrders')) || [];
 const initialState = {
-  orders: [],
+  orders: savedOrders,
   currentOrder: null,
   loading: false,
   error: null,
@@ -41,6 +42,10 @@ const orderSlice = createSlice({
   reducers: {
     clearOrder: (state) => {
       state.currentOrder = null;
+    },
+    addDemoOrder: (state, action) => {
+      state.orders.unshift(action.payload);
+      localStorage.setItem('userOrders', JSON.stringify(state.orders));
     }
   },
   extraReducers: (builder) => {
@@ -51,16 +56,27 @@ const orderSlice = createSlice({
       .addCase(placeOrder.fulfilled, (state, action) => {
         state.loading = false;
         state.currentOrder = action.payload;
+        state.orders.unshift(action.payload);
+        localStorage.setItem('userOrders', JSON.stringify(state.orders));
       })
       .addCase(placeOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || 'Failed to place order';
       })
+      .addCase(fetchOrders.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.loading = false;
         state.orders = action.payload;
+        localStorage.setItem('userOrders', JSON.stringify(action.payload));
+      })
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.loading = false;
+        // Keep the orders we already have (from localStorage)
       });
   },
 });
 
-export const { clearOrder } = orderSlice.actions;
+export const { clearOrder, addDemoOrder } = orderSlice.actions;
 export default orderSlice.reducer;

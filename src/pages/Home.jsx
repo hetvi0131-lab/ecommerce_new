@@ -84,7 +84,7 @@ const Home = () => {
             </div>
             <div>
               <h4 className="font-black text-sm text-gray-900">Free Shipping</h4>
-              <p className="text-xs text-gray-500 font-medium">Orders over $100</p>
+              <p className="text-xs text-gray-500 font-medium">Orders over ₹500</p>
             </div>
           </div>
           <div className="flex items-center gap-5">
