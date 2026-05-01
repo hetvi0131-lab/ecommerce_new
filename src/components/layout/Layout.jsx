@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Layout = () => {
   const location = useLocation();
-  const hideNavFooter = ['/login', '/register'].includes(location.pathname);
+  const hideNavFooter = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/admin');
 
   return (
     <div className="flex flex-col min-h-screen bg-white transition-colors duration-300">

@@ -85,4 +85,34 @@ router.put('/profile', protect, async (req, res) => {
   }
 });
 
+// @desc    Add a new admin
+// @route   POST /api/auth/add-admin
+router.post('/add-admin', protect, async (req, res) => {
+  // Check if current user is admin
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Not authorized as an admin' });
+  }
+
+  const { name, email, password } = req.body;
+  const userExists = await User.findOne({ email });
+
+  if (userExists) {
+    res.status(400).json({ message: 'User already exists' });
+    return;
+  }
+
+  const user = await User.create({ name, email, password, role: 'admin' });
+
+  if (user) {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    });
+  } else {
+    res.status(400).json({ message: 'Invalid admin data' });
+  }
+});
+
 module.exports = router;

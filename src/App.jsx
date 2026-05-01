@@ -16,6 +16,12 @@ const OrderConfirmation = lazy(() => import('./pages/OrderConfirmation'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Wishlist = lazy(() => import('./pages/Wishlist'));
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout'));
+const AdminOrders = lazy(() => import('./components/admin/AdminOrders'));
+const AdminUsers = lazy(() => import('./components/admin/AdminUsers'));
+const AdminPayments = lazy(() => import('./components/admin/AdminPayments'));
+const AdminSettings = lazy(() => import('./components/admin/AdminSettings'));
+const AdminProducts = lazy(() => import('./components/admin/AdminProducts'));
 const Orders = lazy(() => import('./pages/Orders'));
 
 const App = () => {
@@ -60,9 +66,16 @@ const App = () => {
           {/* Admin Routes */}
           <Route path="admin" element={
             <ProtectedRoute adminOnly={true}>
-              <AdminDashboard />
+              <AdminLayout />
             </ProtectedRoute>
-          } />
+          }>
+            <Route index element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="payments" element={<AdminPayments />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
         </Route>
       </Routes>
     </Suspense>

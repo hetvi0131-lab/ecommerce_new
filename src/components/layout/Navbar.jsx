@@ -8,7 +8,7 @@ import Button from '../common/Button';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
@@ -81,27 +81,34 @@ const Navbar = () => {
 
             {user ? (
               <div className="relative group">
-                <button className="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-2xl transition-colors">
+                <Link
+                  to={user.role === 'admin' ? '/admin' : '#'}
+                  className="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-2xl transition-colors"
+                >
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary-600 to-accent-500 flex items-center justify-center shadow-lg shadow-primary-500/20">
                     <User className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-sm font-black text-gray-900">{user.name}</span>
-                </button>
-                <div className="absolute right-0 mt-4 w-56 bg-white border border-gray-100 rounded-3xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 py-3 z-[100]">
-                  <div className="px-4 py-3 mb-2 border-b border-gray-50">
-                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Account</p>
-                    <p className="text-sm font-black text-gray-900 truncate">{user.email}</p>
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-black text-gray-900 leading-tight">{user.name}</span>
+                    {user.role === 'admin' && (
+                      <span className="text-[10px] font-black text-primary-600 uppercase tracking-widest leading-tight">Admin Dashboard</span>
+                    )}
                   </div>
-                  <Link to="/profile" className="block px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors">Profile</Link>
-                  <Link to="/orders" className="block px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors">Order History</Link>
-                  {user.role === 'admin' && (
-                    <Link to="/admin" className="block px-5 py-2.5 text-sm font-black text-primary-600 hover:bg-primary-50 transition-colors border-l-4 border-primary-600">Admin Dashboard</Link>
-                  )}
-                  <div className="my-2 border-t border-gray-50" />
-                  <button onClick={handleLogout} className="w-full text-left px-5 py-2.5 text-sm font-black text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
-                    <LogOut className="w-4 h-4" /> Sign Out
-                  </button>
-                </div>
+                </Link>
+                {user.role !== 'admin' && (
+                  <div className="absolute right-0 mt-4 w-56 bg-white border border-gray-100 rounded-3xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 py-3 z-[100]">
+                    <div className="px-4 py-3 mb-2 border-b border-gray-50">
+                      <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Account</p>
+                      <p className="text-sm font-black text-gray-900 truncate">{user.email}</p>
+                    </div>
+                    <Link to="/profile" className="block px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors">Profile</Link>
+                    <Link to="/orders" className="block px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors">Order History</Link>
+                    <div className="my-2 border-t border-gray-50" />
+                    <button onClick={handleLogout} className="w-full text-left px-5 py-2.5 text-sm font-black text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center gap-3">

@@ -8,7 +8,7 @@ connectDB();
 
 const seedAdmin = async () => {
   try {
-    const adminExists = await User.findOne({ email: 'admin@vogue.com' });
+    const adminExists = await User.findOne({ email: 'admin@admin.com' });
     if (adminExists) {
       console.log('Admin already exists');
       process.exit();
@@ -16,8 +16,8 @@ const seedAdmin = async () => {
 
     const admin = await User.create({
       name: 'Admin',
-      email: 'admin@vogue.com',
-      password: 'admin123', // This will be hashed by the model pre-save hook
+      email: 'admin@admin.com',
+      password: 'admin', // This will be hashed by the model pre-save hook
       role: 'admin'
     });
 

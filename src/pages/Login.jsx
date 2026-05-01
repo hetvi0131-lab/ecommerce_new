@@ -26,7 +26,12 @@ const Login = () => {
     const result = await dispatch(login(formData));
     if (login.fulfilled.match(result)) {
       toast.success('Login successful!');
-      navigate(from, { replace: true });
+      const user = result.payload;
+      if (user.role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     }
   };
 

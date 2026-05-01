@@ -23,7 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
-# Backend
-backend/node_modules
+# Environment Variables
+.env
+.env.*
 backend/.env
-backend/.env.local
+
+# Temporary AI folders
+backend/scratch/
+scratch/
